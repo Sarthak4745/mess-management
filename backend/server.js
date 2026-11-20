@@ -29,6 +29,7 @@ const StudentNotice = require("./models/studentnotice");
 const VendorFeedback = require("./models/vendorfeedback");
 
 const app = express();
+app.set("trust proxy", 1); // Trust Render's reverse proxy
 app.use(express.json());
 app.use(cors());
 
