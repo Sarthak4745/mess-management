@@ -3465,7 +3465,7 @@ app.post("/api/auth/forgot-password", forgotPasswordLimiter, async (req, res) =>
 
     await user.save();
 
-    const resetLink = `http://127.0.0.1:5500/reset-password.html?token=${token}`;
+    const resetLink = `https://mess-management-frontend-w9e9.onrender.com/reset-password.html?token=${token}`;
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -3511,7 +3511,7 @@ app.post("/api/auth/forgot-password", forgotPasswordLimiter, async (req, res) =>
 
   await vendor.save();
 
-  const resetLink = `http://127.0.0.1:5500/reset-password.html?token=${token}`;
+  const resetLink = `https://mess-management-frontend-w9e9.onrender.com/reset-password.html?token=${token}`;
 
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
