@@ -234,7 +234,7 @@ app.use((req, res, next) => {
 // ============================================================
 
 // adminDB → notices, admins, students, policy
-mongoose.connect("mongodb://127.0.0.1:27017/adminDB")
+mongoose.connect(process.env.ADMIN_DB_URI)
   .then(() => {
     console.log("Connected to adminDB");
     Admin.createIndexes();
@@ -243,8 +243,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/adminDB")
   .catch(err => console.log(err));
 
 // studentDB → users, preferences, food cancels, billing
-const studentConnection = mongoose.createConnection("mongodb://127.0.0.1:27017/studentDB");
-studentConnection.on("connected", () => console.log("Connected to studentDB"));
+
 
 
 // ============================================================

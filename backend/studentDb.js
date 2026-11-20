@@ -1,4 +1,4 @@
 const mongoose = require("mongoose");
-const studentConnection = mongoose.createConnection("mongodb://127.0.0.1:27017/studentDB");
+const studentConnection = mongoose.createConnection(process.env.STUDENT_DB_URI);
 studentConnection.on("connected", () => console.log("Connected to studentDB"));
 module.exports = studentConnection;
