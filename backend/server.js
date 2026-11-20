@@ -4020,7 +4020,7 @@ app.get("/api/vendor/billing", authenticateToken, requireVendor, async (req, res
 // DEFAULT ROUTE & SERVER START
 // ============================================================
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "front_page.html"));
+  res.sendFile(path.join(__dirname, "..", "index.html"));
 });
 
 // ============================================================
