@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Cancellation = require("./cancellation");
+const Cancellation = require("./Cancellation");
 const studentConnection = require("../studentDb");
 
 const FoodCancelSchema = new mongoose.Schema({
