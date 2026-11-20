@@ -21,7 +21,7 @@ const Student = require("./models/Student");
 const Vendor = require("./models/Vendor");
 const User = require("./models/User");
 const Preference = require("./models/Preference");
-const Cancellation = require("./models/cancellation");
+const Cancellation = require("./models/Cancellation");
 const FoodCancel = require("./models/Foodcancel");
 const MonthlyBillEntry = require("./models/Monthlybillentry");
 const StudentBilling = require("./models/studentbilling");
@@ -430,7 +430,7 @@ async function computeMonthlyBill(studentId, year, month, fromDay, toDay) {
     const cancelled = cancellations.some(c => {
       if (c.status !== "approved") return false;
       const from = new Date(c.fromDate); from.setHours(0, 0, 0, 0);
-      const to   = new Date(c.toDate);   to.setHours(0, 0, 0, 0);
+      const to = new Date(c.toDate); to.setHours(0, 0, 0, 0);
       return d >= from && d <= to;
     });
 
@@ -451,10 +451,10 @@ async function computeMonthlyBill(studentId, year, month, fromDay, toDay) {
         if (currentPeriod) breakdown.push(currentPeriod);
         currentPeriod = {
           startDate: dateStr,
-          endDate:   dateStr,
-          days:      1,
-          rate:      dailyRate,
-          amount:    dailyRate
+          endDate: dateStr,
+          days: 1,
+          rate: dailyRate,
+          amount: dailyRate
         };
       }
     } else {
@@ -481,15 +481,15 @@ async function computeMonthlyBill(studentId, year, month, fromDay, toDay) {
     );
   }
 
-  const mKey   = `${year}-${String(month + 1).padStart(2, "0")}`;
+  const mKey = `${year}-${String(month + 1).padStart(2, "0")}`;
   const mLabel = monthStart.toLocaleString("default", { month: "long", year: "numeric" });
 
   return {
-    monthKey:   mKey,
+    monthKey: mKey,
     monthLabel: mLabel,
     totalMeals,
     amountPerMeal,
-    amountDue:  totalAmountDue,
+    amountDue: totalAmountDue,
     breakdown,
     startDay,
     endDay
@@ -510,13 +510,13 @@ async function computeMonthlyBill(studentId, year, month, fromDay, toDay) {
  */
 async function upsertMonthBill(studentId, name, billEntry, incremental = false) {
   const entry = {
-    monthKey:      billEntry.monthKey,
-    monthLabel:    billEntry.monthLabel,
-    totalMeals:    billEntry.totalMeals,
+    monthKey: billEntry.monthKey,
+    monthLabel: billEntry.monthLabel,
+    totalMeals: billEntry.totalMeals,
     amountPerMeal: billEntry.amountPerMeal,
-    amountDue:     billEntry.amountDue,
-    breakdown:     billEntry.breakdown || [],
-    updatedAt:     new Date()
+    amountDue: billEntry.amountDue,
+    breakdown: billEntry.breakdown || [],
+    updatedAt: new Date()
   };
 
   const doc = await StudentBilling.findOne({ studentId });
@@ -529,16 +529,16 @@ async function upsertMonthBill(studentId, name, billEntry, incremental = false) 
   const existing = doc.monthlyBills.find(b => b.monthKey === billEntry.monthKey);
 
   if (existing) {
-    let newAmountDue  = entry.amountDue;
+    let newAmountDue = entry.amountDue;
     let newTotalMeals = entry.totalMeals;
-    let newBreakdown  = entry.breakdown;
+    let newBreakdown = entry.breakdown;
     let newAmountPerMeal = entry.amountPerMeal;
 
     if (incremental) {
       // Append new incremental charges on top of what is already stored
-      newAmountDue  = (existing.amountDue  || 0) + entry.amountDue;
+      newAmountDue = (existing.amountDue || 0) + entry.amountDue;
       newTotalMeals = (existing.totalMeals || 0) + entry.totalMeals;
-      newBreakdown  = mergeBreakdownList([...(existing.breakdown || []), ...entry.breakdown]);
+      newBreakdown = mergeBreakdownList([...(existing.breakdown || []), ...entry.breakdown]);
       newAmountPerMeal = newTotalMeals > 0
         ? Math.round((newAmountDue / newTotalMeals) * 100) / 100
         : entry.amountPerMeal;
@@ -548,12 +548,12 @@ async function upsertMonthBill(studentId, name, billEntry, incremental = false) 
       { studentId, "monthlyBills.monthKey": billEntry.monthKey },
       {
         $set: {
-          "monthlyBills.$.monthLabel":    entry.monthLabel,
-          "monthlyBills.$.totalMeals":    newTotalMeals,
+          "monthlyBills.$.monthLabel": entry.monthLabel,
+          "monthlyBills.$.totalMeals": newTotalMeals,
           "monthlyBills.$.amountPerMeal": newAmountPerMeal,
-          "monthlyBills.$.amountDue":     newAmountDue,
-          "monthlyBills.$.breakdown":     newBreakdown,
-          "monthlyBills.$.updatedAt":     entry.updatedAt
+          "monthlyBills.$.amountDue": newAmountDue,
+          "monthlyBills.$.breakdown": newBreakdown,
+          "monthlyBills.$.updatedAt": entry.updatedAt
         }
       }
     );
@@ -708,7 +708,7 @@ function calculateOutstanding(billingDoc) {
 // ============================================================
 
 // Register a new vendor
-app.post("/api/admin/vendors",authenticateToken,requireAdmin, vendorUpload.single("contract"), async (req, res) => {
+app.post("/api/admin/vendors", authenticateToken, requireAdmin, vendorUpload.single("contract"), async (req, res) => {
   try {
     const { name, phone, email, aadhaar, tenure, hostel } = req.body;
     if (!name || !phone) return res.status(400).json({ message: "Vendor name and phone are required" });
@@ -753,11 +753,11 @@ app.post("/api/admin/vendors",authenticateToken,requireAdmin, vendorUpload.singl
 });
 
 // Get all vendors
-app.get("/api/admin/vendors",authenticateToken,requireAdmin, async (req, res) => {
+app.get("/api/admin/vendors", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const vendors = await Vendor.find()
-    .select("-password -resetToken -resetTokenExpiry")
-    .sort({ createdAt: -1 });
+      .select("-password -resetToken -resetTokenExpiry")
+      .sort({ createdAt: -1 });
     res.json(vendors);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -765,7 +765,7 @@ app.get("/api/admin/vendors",authenticateToken,requireAdmin, async (req, res) =>
 });
 
 // Delete vendor
-app.delete("/api/admin/vendors/:id",authenticateToken,requireAdmin, async (req, res) => {
+app.delete("/api/admin/vendors/:id", authenticateToken, requireAdmin, async (req, res) => {
   try {
     await Vendor.findByIdAndDelete(req.params.id);
     res.json({ success: true });
@@ -775,43 +775,43 @@ app.delete("/api/admin/vendors/:id",authenticateToken,requireAdmin, async (req, 
 });
 
 // Update vendor details (optional contract re-upload)
-app.patch("/api/admin/vendors/:id",authenticateToken,
+app.patch("/api/admin/vendors/:id", authenticateToken,
   requireAdmin, vendorUpload.single("contract"), async (req, res) => {
-  try {
-    const { name, phone, email, aadhaar, hostel, tenure } = req.body;
-    const oldVendor = await Vendor.findById(req.params.id);
-    if (!oldVendor) return res.status(404).json({ message: "Vendor not found" });
+    try {
+      const { name, phone, email, aadhaar, hostel, tenure } = req.body;
+      const oldVendor = await Vendor.findById(req.params.id);
+      if (!oldVendor) return res.status(404).json({ message: "Vendor not found" });
 
-    if (phone !== undefined && !/^\d{10}$/.test(String(phone).trim())) {
-      return res.status(400).json({ message: "Phone number must be exactly 10 digits" });
-    }
-    if (aadhaar !== undefined && aadhaar !== "" && !/^\d{12}$/.test(String(aadhaar).trim())) {
-      return res.status(400).json({ message: "Aadhaar number must be exactly 12 digits" });
-    }
-
-    const hostelName = (hostel !== undefined ? hostel : oldVendor.hostel || "").trim();
-    if (hostelName && hostelName !== oldVendor.hostel) {
-      const exists = await Hostel.findOne({ name: hostelName });
-      if (!exists) {
-        return res.status(400).json({ message: `Hostel "${hostelName}" does not exist in the hostel directory` });
+      if (phone !== undefined && !/^\d{10}$/.test(String(phone).trim())) {
+        return res.status(400).json({ message: "Phone number must be exactly 10 digits" });
       }
-    }
+      if (aadhaar !== undefined && aadhaar !== "" && !/^\d{12}$/.test(String(aadhaar).trim())) {
+        return res.status(400).json({ message: "Aadhaar number must be exactly 12 digits" });
+      }
 
-    const update = {
-      name: name !== undefined ? name.trim() : oldVendor.name,
-      phone: phone !== undefined ? String(phone).trim() : oldVendor.phone,
-      email: email !== undefined ? String(email).trim() : oldVendor.email,
-      aadhaar: aadhaar !== undefined ? String(aadhaar).trim() : oldVendor.aadhaar,
-      hostel: hostelName,
-      tenure: tenure !== undefined ? tenure : oldVendor.tenure
-    };
-    if (req.file) update.contract = req.file.filename;
-    const vendor = await Vendor.findByIdAndUpdate(req.params.id, update, { new: true });
-    res.json(vendor);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+      const hostelName = (hostel !== undefined ? hostel : oldVendor.hostel || "").trim();
+      if (hostelName && hostelName !== oldVendor.hostel) {
+        const exists = await Hostel.findOne({ name: hostelName });
+        if (!exists) {
+          return res.status(400).json({ message: `Hostel "${hostelName}" does not exist in the hostel directory` });
+        }
+      }
+
+      const update = {
+        name: name !== undefined ? name.trim() : oldVendor.name,
+        phone: phone !== undefined ? String(phone).trim() : oldVendor.phone,
+        email: email !== undefined ? String(email).trim() : oldVendor.email,
+        aadhaar: aadhaar !== undefined ? String(aadhaar).trim() : oldVendor.aadhaar,
+        hostel: hostelName,
+        tenure: tenure !== undefined ? tenure : oldVendor.tenure
+      };
+      if (req.file) update.contract = req.file.filename;
+      const vendor = await Vendor.findByIdAndUpdate(req.params.id, update, { new: true });
+      res.json(vendor);
+    } catch (err) {
+      res.status(400).json({ message: err.message });
+    }
+  });
 
 // Update vendor rating
 app.patch("/api/admin/vendors/:id/rating", authenticateToken, requireAdmin, async (req, res) => {
@@ -825,7 +825,7 @@ app.patch("/api/admin/vendors/:id/rating", authenticateToken, requireAdmin, asyn
 });
 
 // View vendor contract PDF
-app.get("/api/admin/vendors/:id/contract",authenticateToken,requireAdmin, async (req, res) => {
+app.get("/api/admin/vendors/:id/contract", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const vendor = await Vendor.findById(req.params.id);
     if (!vendor || !vendor.contract) return res.status(404).json({ message: "No contract found for this vendor" });
@@ -839,7 +839,7 @@ app.get("/api/admin/vendors/:id/contract",authenticateToken,requireAdmin, async 
 // VENDOR CONTRACT
 // ============================================================
 
-app.get("/api/vendor/contract",authenticateToken,requireVendor, async (req, res) => {
+app.get("/api/vendor/contract", authenticateToken, requireVendor, async (req, res) => {
   try {
     const vendorId = req.user.sub;
 
@@ -898,7 +898,7 @@ app.get("/api/vendor/contract",authenticateToken,requireVendor, async (req, res)
     }
 
     const contractPdfUrl = vendor.contract
-      ? `${req.protocol}://${req.get("host")}/uploads/${vendor.contract}`: "";
+      ? `${req.protocol}://${req.get("host")}/uploads/${vendor.contract}` : "";
 
     res.json({
       contractStart,
@@ -970,7 +970,7 @@ app.get(
 const router = express.Router();
 app.use("/api/admin", router);
 
-router.post("/policy",authenticateToken,requireAdmin, async (req, res) => {
+router.post("/policy", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { maxMonthlyOffs, flatMealRate, scheduledRate, effectiveFrom } = req.body;
     let policy = await Policy.findOne();
@@ -1038,7 +1038,7 @@ router.post("/policy",authenticateToken,requireAdmin, async (req, res) => {
   }
 });
 
-router.get("/policy",authenticateToken,requireAdmin, async (req, res) => {
+router.get("/policy", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const policy = await Policy.findOne();
     res.json(policy);
@@ -1047,7 +1047,7 @@ router.get("/policy",authenticateToken,requireAdmin, async (req, res) => {
   }
 });
 
-router.get("/policy/rate-history",authenticateToken,requireAdmin, async (req, res) => {
+router.get("/policy/rate-history", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const policy = await Policy.findOne();
     res.json(policy?.rateHistory || []);
@@ -1061,7 +1061,7 @@ router.get("/policy/rate-history",authenticateToken,requireAdmin, async (req, re
 // ============================================================
 
 // Add hostel
-app.post("/api/admin/hostels",authenticateToken,requireAdmin, menuUpload.single("messMenuImage"), async (req, res) => {
+app.post("/api/admin/hostels", authenticateToken, requireAdmin, menuUpload.single("messMenuImage"), async (req, res) => {
   try {
     const { name, capacity, description, wardens, caretakers, messVendor } = req.body;
     if (!name || !name.trim()) return res.status(400).json({ message: "Hostel name is required" });
@@ -1098,7 +1098,7 @@ app.post("/api/admin/hostels",authenticateToken,requireAdmin, menuUpload.single(
 });
 
 // Get all hostels (admin view)
-app.get("/api/admin/hostels",authenticateToken,requireAdmin, async (req, res) => {
+app.get("/api/admin/hostels", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const hostels = await Hostel.find().sort({ createdAt: -1 });
     const sanitized = hostels.map(h => {
@@ -1113,7 +1113,7 @@ app.get("/api/admin/hostels",authenticateToken,requireAdmin, async (req, res) =>
 });
 
 // Update hostel
-app.put("/api/admin/hostels/:id",authenticateToken,requireAdmin, menuUpload.single("messMenuImage"), async (req, res) => {
+app.put("/api/admin/hostels/:id", authenticateToken, requireAdmin, menuUpload.single("messMenuImage"), async (req, res) => {
   try {
     const oldHostel = await Hostel.findById(req.params.id);
     if (!oldHostel) return res.status(404).json({ message: "Hostel not found" });
@@ -1169,7 +1169,7 @@ app.put("/api/admin/hostels/:id",authenticateToken,requireAdmin, menuUpload.sing
 });
 
 // Delete hostel
-app.delete("/api/admin/hostels/:id",authenticateToken,requireAdmin, async (req, res) => {
+app.delete("/api/admin/hostels/:id", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const hostel = await Hostel.findById(req.params.id);
     if (!hostel) return res.status(404).json({ message: "Hostel not found" });
@@ -1197,7 +1197,7 @@ app.delete("/api/admin/hostels/:id",authenticateToken,requireAdmin, async (req, 
 // ============================================================
 
 // Post admin notice
-app.post("/api/admin/add-notice",authenticateToken,requireAdmin, upload.single("attachment"), async (req, res) => {
+app.post("/api/admin/add-notice", authenticateToken, requireAdmin, upload.single("attachment"), async (req, res) => {
   try {
     const newNotice = new Notice({
       content: req.body.content,
@@ -1211,7 +1211,7 @@ app.post("/api/admin/add-notice",authenticateToken,requireAdmin, upload.single("
 });
 
 // Get admin notices
-app.get("/api/admin/notices",authenticateToken,requireAdmin, async (req, res) => {
+app.get("/api/admin/notices", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const notices = await Notice.find().sort({ createdAt: -1 });
     res.json(notices);
@@ -1221,7 +1221,7 @@ app.get("/api/admin/notices",authenticateToken,requireAdmin, async (req, res) =>
 });
 
 // Delete admin notice
-app.delete("/api/admin/delete-notice/:id",authenticateToken,requireAdmin, async (req, res) => {
+app.delete("/api/admin/delete-notice/:id", authenticateToken, requireAdmin, async (req, res) => {
   try {
     await Notice.findByIdAndDelete(req.params.id);
     res.json({ success: true });
@@ -1235,7 +1235,7 @@ app.delete("/api/admin/delete-notice/:id",authenticateToken,requireAdmin, async 
 // ============================================================
 
 // Add student
-app.post("/api/admin/add-student",authenticateToken,requireAdmin, async (req, res) => {
+app.post("/api/admin/add-student", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { name, regNo, branch, year, email, phone } = req.body;
     const password = req.body.password || "Password@123";
@@ -1243,10 +1243,10 @@ app.post("/api/admin/add-student",authenticateToken,requireAdmin, async (req, re
       return res.status(400).json({
         success: false,
         message: "A valid password is required"
-    });
-  } 
+      });
+    }
 
-const hashedPassword = await hashPassword(password);
+    const hashedPassword = await hashPassword(password);
     if (!name || !regNo || !branch || !year || !email) {
       return res.status(400).json({ success: false, message: "Required fields missing" });
     }
@@ -1295,7 +1295,7 @@ const hashedPassword = await hashPassword(password);
 // Bulk import students via CSV
 const csv = require("csv-parse/sync");
 
-app.post("/api/admin/import-students",authenticateToken,requireAdmin, upload.single("csvFile"), async (req, res) => {
+app.post("/api/admin/import-students", authenticateToken, requireAdmin, upload.single("csvFile"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: "No file uploaded" });
 
@@ -1356,7 +1356,7 @@ app.post("/api/admin/import-students",authenticateToken,requireAdmin, upload.sin
 
 // Get all students
 
-app.get("/api/admin/students",authenticateToken,requireAdmin, async (req, res) => {
+app.get("/api/admin/students", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const students = await Student.find()
       .select("-password -resetToken -resetTokenExpiry");
@@ -1369,7 +1369,7 @@ app.get("/api/admin/students",authenticateToken,requireAdmin, async (req, res) =
 
 
 // Update student
-app.put("/api/admin/update-student/:id",authenticateToken,requireAdmin, async (req, res) => {
+app.put("/api/admin/update-student/:id", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const oldStudent = await Student.findById(req.params.id);
     if (!oldStudent) return res.status(404).json({ message: "Student not found" });
@@ -1410,12 +1410,12 @@ app.put("/api/admin/update-student/:id",authenticateToken,requireAdmin, async (r
       fullName: req.body.name || oldStudent.name,
       room: req.body.room !== undefined ? req.body.room : (oldStudent.room || ""),
       hostel: hostelName,
-      phone: req.body.phone !== undefined? String(req.body.phone).trim():(oldStudent.phone || "")
-  };
+      phone: req.body.phone !== undefined ? String(req.body.phone).trim() : (oldStudent.phone || "")
+    };
 
-  if (updatePayload.password) {
+    if (updatePayload.password) {
       userUpdate.password = updatePayload.password;
-  }
+    }
 
     await User.findOneAndUpdate(
       { email: oldStudent.email },
@@ -1432,7 +1432,7 @@ app.put("/api/admin/update-student/:id",authenticateToken,requireAdmin, async (r
 });
 
 // Delete student
-app.delete("/api/admin/delete-student/:id",authenticateToken,requireAdmin, async (req, res) => {
+app.delete("/api/admin/delete-student/:id", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const student = await Student.findById(req.params.id);
     if (student) {
@@ -1446,7 +1446,7 @@ app.delete("/api/admin/delete-student/:id",authenticateToken,requireAdmin, async
 });
 
 // Restore student (with duplicate checking)
-app.post("/api/admin/restore-student",authenticateToken,requireAdmin, async (req, res) => {
+app.post("/api/admin/restore-student", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { name, regNo, branch, year, hostel, room, email, phone, password } = req.body;
 
@@ -1510,7 +1510,7 @@ app.post("/api/admin/restore-student",authenticateToken,requireAdmin, async (req
 // ============================================================
 
 // Add admin
-app.post("/add-admin",authenticateToken,requireAdmin, async (req, res) => {
+app.post("/add-admin", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { name, email, password } = req.body;
     if (typeof password !== "string" || !password.trim()) {
@@ -1542,7 +1542,7 @@ app.post("/add-admin",authenticateToken,requireAdmin, async (req, res) => {
 });
 
 // Get all admins
-app.get("/admins",authenticateToken,requireAdmin, async (req, res) => {
+app.get("/admins", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const admins = await Admin.find();
     res.json(admins);
@@ -1553,7 +1553,7 @@ app.get("/admins",authenticateToken,requireAdmin, async (req, res) => {
 
 // Update admin password
 
-app.post("/update-password",authenticateToken,requireAdmin, async (req, res) => {
+app.post("/update-password", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const {
       email,
@@ -1584,9 +1584,9 @@ app.post("/update-password",authenticateToken,requireAdmin, async (req, res) => 
       });
     }
 
-    const admin = await Admin.findOne({ 
+    const admin = await Admin.findOne({
       email: email.trim().toLowerCase()
-     });
+    });
 
     if (!admin) {
       return res.status(400).json({
@@ -1626,7 +1626,7 @@ app.post("/update-password",authenticateToken,requireAdmin, async (req, res) => 
       message: "Server error updating password"
     });
   }
-}); 
+});
 
 
 // ============================================================
@@ -1673,8 +1673,8 @@ app.post("/login", loginLimiter, async (req, res) => {
 
       const token = jwt.sign(
         {
-        sub: admin._id.toString(),
-        role: "admin"
+          sub: admin._id.toString(),
+          role: "admin"
         },
         process.env.JWT_SECRET,
         {
@@ -1702,13 +1702,13 @@ app.post("/login", loginLimiter, async (req, res) => {
 
       const token = jwt.sign({
         sub: vendor._id.toString(),
-        role : "vendor"
+        role: "vendor"
       },
-      process.env.JWT_SECRET,
-      {
-        algorithm: "HS256",
-        expiresIn: "1h"
-      });
+        process.env.JWT_SECRET,
+        {
+          algorithm: "HS256",
+          expiresIn: "1h"
+        });
       return res.json({
         success: true,
         role: "vendor",
@@ -1734,11 +1734,11 @@ app.post("/login", loginLimiter, async (req, res) => {
       sub: user._id.toString(),
       role: "student"
     },
-    process.env.JWT_SECRET,
-    {
-      algorithm: "HS256",
-      expiresIn: "1h"
-    });
+      process.env.JWT_SECRET,
+      {
+        algorithm: "HS256",
+        expiresIn: "1h"
+      });
     return res.json({
       success: true,
       role: "student",
@@ -2203,7 +2203,7 @@ app.get("/api/student/cancel-status", authenticateToken, requireStudent, async (
 // ============================================================
 
 // Get today's coupon for a student
-app.get("/api/student/coupon/today",authenticateToken, requireStudent, async (req, res) => {
+app.get("/api/student/coupon/today", authenticateToken, requireStudent, async (req, res) => {
   try {
     const user = await User.findById(req.user.sub);
     if (!user) {
@@ -2252,7 +2252,7 @@ app.get("/api/student/coupon/today",authenticateToken, requireStudent, async (re
 });
 
 // Vendor: get coupon summary for a given date
-app.get("/api/vendor/coupon-summary",authenticateToken,requireVendor, async (req, res) => {
+app.get("/api/vendor/coupon-summary", authenticateToken, requireVendor, async (req, res) => {
   try {
     const date = req.query.date || new Date().toISOString().split("T")[0];
     const targetDate = new Date(date);
@@ -2349,7 +2349,7 @@ async function accrueIncrementalBilling(studentId, name, asOfDate, customFromDat
   // Group days into calendar months and process each
   let cursor = new Date(fromDate);
   while (cursor <= today) {
-    const curYear  = cursor.getFullYear();
+    const curYear = cursor.getFullYear();
     const curMonth = cursor.getMonth();
 
     // Determine end of range for this month
@@ -2401,19 +2401,19 @@ app.get("/api/student/billing", authenticateToken, requireStudent, async (req, r
     const summary = calculateBillingSummary(billingDoc);
 
     res.json({
-      studentId:          studentId,
+      studentId: studentId,
       name,
-      monthKey:           currentMonthKey,
-      monthLabel:         currentMonthEntry?.monthLabel || "",
-      totalMeals:         currentMonthEntry?.totalMeals || 0,
-      amountPerMeal:      currentMonthEntry?.amountPerMeal || 0,
-      amountDue:          currentMonthEntry?.amountDue || 0,
-      newCharges:         currentMonthEntry?.amountDue || 0,
-      breakdown:          currentMonthEntry?.breakdown || [],
+      monthKey: currentMonthKey,
+      monthLabel: currentMonthEntry?.monthLabel || "",
+      totalMeals: currentMonthEntry?.totalMeals || 0,
+      amountPerMeal: currentMonthEntry?.amountPerMeal || 0,
+      amountDue: currentMonthEntry?.amountDue || 0,
+      newCharges: currentMonthEntry?.amountDue || 0,
+      breakdown: currentMonthEntry?.breakdown || [],
       ...summary,
-      monthlyBreakdown:   allMonths,
-      otherCharges:       billingDoc?.otherCharges || [],
-      paymentHistory:     billingDoc?.payments || []
+      monthlyBreakdown: allMonths,
+      otherCharges: billingDoc?.otherCharges || [],
+      paymentHistory: billingDoc?.payments || []
     });
   } catch (err) {
     console.error("Billing Error:", err);
@@ -2422,7 +2422,7 @@ app.get("/api/student/billing", authenticateToken, requireStudent, async (req, r
 });
 
 // Admin: get one student's full billing history
-app.get("/api/admin/student-billing",authenticateToken,requireAdmin, async (req, res) => {
+app.get("/api/admin/student-billing", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { studentId } = req.query;
     if (!studentId) return res.status(400).json({ error: "studentId required" });
@@ -2456,7 +2456,7 @@ app.get("/api/admin/student-billing",authenticateToken,requireAdmin, async (req,
 });
 
 // Admin: get all students billing summary (with correct outstanding balance and separate categories)
-app.get("/api/admin/billing/all",authenticateToken,requireAdmin, async (req, res) => {
+app.get("/api/admin/billing/all", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const allUsers = await User.find();
     const allStudents = await Student.find();
@@ -2499,41 +2499,41 @@ app.get("/api/admin/billing/all",authenticateToken,requireAdmin, async (req, res
       // Accrue only unbilled days — safe on refresh
       const billingDoc = await accrueIncrementalBilling(studentId, student.name);
       const summary = calculateBillingSummary(billingDoc);
-      const allMonths   = billingDoc?.monthlyBills || [];
+      const allMonths = billingDoc?.monthlyBills || [];
       const currentMonthEntry = allMonths.find(b => b.monthKey === currentMonthKey);
 
       return {
         studentId,
-        regNo:              student.regNo,
-        name:               student.name,
-        room:               student.room,
-        hostel:             student.hostel,
-        year:               student.year,
+        regNo: student.regNo,
+        name: student.name,
+        room: student.room,
+        hostel: student.hostel,
+        year: student.year,
         // Separated Food Billing:
-        foodTotal:          summary.foodTotal,
-        foodPaid:           summary.foodPaid,
-        foodOutstanding:    summary.foodOutstanding,
+        foodTotal: summary.foodTotal,
+        foodPaid: summary.foodPaid,
+        foodOutstanding: summary.foodOutstanding,
         // Separated Other/Hostel Billing:
-        otherTotal:         summary.otherTotal,
-        otherPaid:          summary.otherPaid,
-        otherOutstanding:   summary.otherOutstanding,
+        otherTotal: summary.otherTotal,
+        otherPaid: summary.otherPaid,
+        otherOutstanding: summary.otherOutstanding,
         // Overall Billing:
-        overallTotal:       summary.overallTotal,
-        overallPaid:        summary.overallPaid,
+        overallTotal: summary.overallTotal,
+        overallPaid: summary.overallPaid,
         overallOutstanding: summary.overallOutstanding,
-        status:             summary.status,
+        status: summary.status,
         // Legacy compatibility fields:
-        messBill:           currentMonthEntry?.amountDue || 0,
-        hostelBill:         summary.otherTotal,
-        grandTotal:         summary.overallOutstanding,
+        messBill: currentMonthEntry?.amountDue || 0,
+        hostelBill: summary.otherTotal,
+        grandTotal: summary.overallOutstanding,
         outstandingBalance: summary.overallOutstanding,
-        totalCharged:       summary.overallTotal,
-        totalPaid:          summary.overallPaid,
-        previousBalance:    summary.previousBalance,
+        totalCharged: summary.overallTotal,
+        totalPaid: summary.overallPaid,
+        previousBalance: summary.previousBalance,
         previousOtherBalance: summary.previousOtherBalance,
-        monthlyBreakdown:   allMonths,
-        otherCharges:       billingDoc?.otherCharges || [],
-        payments:           billingDoc?.payments || []
+        monthlyBreakdown: allMonths,
+        otherCharges: billingDoc?.otherCharges || [],
+        payments: billingDoc?.payments || []
       };
     }));
 
@@ -2545,7 +2545,7 @@ app.get("/api/admin/billing/all",authenticateToken,requireAdmin, async (req, res
 });
 
 // Admin: manually override a specific month's amountDue (admin adjustment, NOT Clear All)
-app.patch("/api/admin/bills/:id",authenticateToken,requireAdmin, async (req, res) => {
+app.patch("/api/admin/bills/:id", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const { month, messBill } = req.body;
@@ -2620,7 +2620,7 @@ app.patch("/api/admin/bills/:id",authenticateToken,requireAdmin, async (req, res
 // Adds the payment to payments[] and returns the updated outstanding balance.
 // Does NOT modify any amountDue or rateHistory.
 // ─────────────────────────────────────────────────────────────────────────────
-app.post("/api/admin/bills/payment",authenticateToken,requireAdmin, async (req, res) => {
+app.post("/api/admin/bills/payment", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { studentId, amount, category, note } = req.body;
     if (!studentId) return res.status(400).json({ error: "studentId required" });
@@ -2673,7 +2673,7 @@ app.post("/api/admin/bills/payment",authenticateToken,requireAdmin, async (req, 
 // POST /api/admin/bills/other-charge
 // Body: { studentId, amount, title, category?, description? }
 // ─────────────────────────────────────────────────────────────────────────────
-app.post("/api/admin/bills/other-charge",authenticateToken,requireAdmin, async (req, res) => {
+app.post("/api/admin/bills/other-charge", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { studentId, amount, title, category, description } = req.body;
     if (!studentId) return res.status(400).json({ error: "studentId required" });
@@ -2726,7 +2726,7 @@ app.post("/api/admin/bills/other-charge",authenticateToken,requireAdmin, async (
 // Records clearance payments so balance becomes ₹0, status becomes "Settled",
 // and the cleared state is completely persistent across refreshes.
 // ─────────────────────────────────────────────────────────────────────────────
-app.post("/api/admin/bills/clean",authenticateToken,requireAdmin, async (req, res) => {
+app.post("/api/admin/bills/clean", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { studentId } = req.body;
     if (!studentId) return res.status(400).json({ error: "studentId required" });
@@ -2790,7 +2790,7 @@ app.post("/api/admin/bills/clean",authenticateToken,requireAdmin, async (req, re
 });
 
 // Admin: "Clear All" (alias supporting single student or bulk)
-app.post("/api/admin/bills/clear-all",authenticateToken,requireAdmin, async (req, res) => {
+app.post("/api/admin/bills/clear-all", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { studentId } = req.body;
     if (studentId) {
@@ -2888,7 +2888,7 @@ app.post("/api/admin/bills/clear-all",authenticateToken,requireAdmin, async (req
 });
 
 // Admin: set previousBalance for a student (manual adjustment for existing pre-digital balances)
-app.post("/api/admin/bills/set-previous-balance",authenticateToken,requireAdmin, async (req, res) => {
+app.post("/api/admin/bills/set-previous-balance", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { studentId, previousBalance, previousOtherBalance } = req.body;
     if (!studentId) return res.status(400).json({ error: "studentId required" });
@@ -2922,7 +2922,7 @@ app.post("/api/admin/bills/set-previous-balance",authenticateToken,requireAdmin,
 // Admin: Process daily billing on demand
 // POST /api/admin/billing/process-daily
 // Body: { studentId?, targetDate? }
-app.post("/api/admin/billing/process-daily",authenticateToken,requireAdmin, async (req, res) => {
+app.post("/api/admin/billing/process-daily", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { studentId, targetDate, fromDate: customFrom } = req.body;
     const target = targetDate ? new Date(targetDate) : new Date();
@@ -2967,7 +2967,7 @@ app.post("/api/admin/billing/process-daily",authenticateToken,requireAdmin, asyn
 
 // Admin: Get billing summary for a specific student
 // GET /api/admin/billing/summary/:studentId
-app.get("/api/admin/billing/summary/:studentId",authenticateToken,requireAdmin, async (req, res) => {
+app.get("/api/admin/billing/summary/:studentId", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const studentId = req.params.studentId;
     let email = studentId;
@@ -2985,13 +2985,13 @@ app.get("/api/admin/billing/summary/:studentId",authenticateToken,requireAdmin, 
     const currentMonthEntry = allMonths.find(b => b.monthKey === currentMonthKey);
 
     res.json({
-      studentId:          email,
+      studentId: email,
       name,
-      newCharges:         currentMonthEntry?.amountDue || 0,
-      breakdown:          currentMonthEntry?.breakdown || [],
-      monthlyBreakdown:   allMonths,
-      otherCharges:       billingDoc?.otherCharges || [],
-      paymentHistory:     billingDoc?.payments || [],
+      newCharges: currentMonthEntry?.amountDue || 0,
+      breakdown: currentMonthEntry?.breakdown || [],
+      monthlyBreakdown: allMonths,
+      otherCharges: billingDoc?.otherCharges || [],
+      paymentHistory: billingDoc?.payments || [],
       ...summary
     });
   } catch (err) {
@@ -3000,7 +3000,7 @@ app.get("/api/admin/billing/summary/:studentId",authenticateToken,requireAdmin, 
 });
 
 // Admin Dashboard: Today's eating and skipping statistics
-app.get("/api/admin/today-stats",authenticateToken,requireAdmin, async (req, res) => {
+app.get("/api/admin/today-stats", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const nowIST = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
     const today = new Date(nowIST);
@@ -3029,7 +3029,7 @@ app.get("/api/admin/today-stats",authenticateToken,requireAdmin, async (req, res
 });
 
 // Admin: get all students billing report
-app.get("/api/admin/all-billing",authenticateToken,requireAdmin, async (req, res) => {
+app.get("/api/admin/all-billing", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const allUsers = await User.find();
     const today = new Date();
@@ -3086,7 +3086,7 @@ app.get("/api/admin/all-billing",authenticateToken,requireAdmin, async (req, res
 });
 
 // GET pending official leave requests
-app.get("/api/admin/leaves/pending",authenticateToken,requireAdmin, async (req, res) => {
+app.get("/api/admin/leaves/pending", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const allDocs = await FoodCancel.find({ "cancellations.reason": "official", "cancellations.status": "pending" });
     const leaves = [];
@@ -3103,7 +3103,7 @@ app.get("/api/admin/leaves/pending",authenticateToken,requireAdmin, async (req, 
 });
 
 // GET processed leave requests
-app.get("/api/admin/leaves/processed",authenticateToken,requireAdmin, async (req, res) => {
+app.get("/api/admin/leaves/processed", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const allDocs = await FoodCancel.find({ "cancellations.reason": "official", "cancellations.status": { $in: ["approved", "rejected"] } });
     const leaves = [];
@@ -3120,7 +3120,7 @@ app.get("/api/admin/leaves/processed",authenticateToken,requireAdmin, async (req
 });
 
 // PATCH approve or reject a leave (action: "approved" or "rejected")
-app.patch("/api/admin/leaves/:cancellationId",authenticateToken,requireAdmin, async (req, res) => {
+app.patch("/api/admin/leaves/:cancellationId", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { cancellationId } = req.params;
     const { action } = req.body;
@@ -3150,16 +3150,16 @@ app.patch("/api/admin/leaves/:cancellationId",authenticateToken,requireAdmin, as
 });
 
 // GET student's own official leave statuses (for showing approval notifications)
-app.get("/api/student/leaves/status",authenticateToken, requireStudent, async (req, res) => {
+app.get("/api/student/leaves/status", authenticateToken, requireStudent, async (req, res) => {
   try {
     const user = await User.findById(req.user.sub);
 
-  if (!user) {
-    return res.status(404).json({
-      success: false,
-      message: "Student not found"
-    });
-  }
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found"
+      });
+    }
 
     const studentId = user.email;
     const doc = await FoodCancel.findOne({ studentId });
@@ -3174,10 +3174,10 @@ app.get("/api/student/leaves/status",authenticateToken, requireStudent, async (r
 // ============================================================
 
 // Student: get cancelled days for a given month
-app.get("/api/student/calendar",authenticateToken, requireStudent, async (req, res) => {
+app.get("/api/student/calendar", authenticateToken, requireStudent, async (req, res) => {
   try {
     const user = await User.findById(req.user.sub);
-    
+
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -3225,7 +3225,7 @@ app.get("/api/student/calendar",authenticateToken, requireStudent, async (req, r
 app.get("/api/student/feedback/status", authenticateToken, requireStudent, async (req, res) => {
   try {
     const user = await User.findById(req.user.sub);
-    
+
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -3239,7 +3239,7 @@ app.get("/api/student/feedback/status", authenticateToken, requireStudent, async
     if (!month || !year) {
       return res.status(400).json({
         hasSubmitted: false,
-        message: "month and year are required"  
+        message: "month and year are required"
       });
     }
 
@@ -3545,63 +3545,63 @@ app.post("/api/auth/forgot-password", forgotPasswordLimiter, async (req, res) =>
 });
 
 // Reset password — updates BOTH studentDB.User and adminDB.Student
-  app.post("/api/auth/reset-password", async (req, res) => {
-    const { token, newPassword } = req.body;
+app.post("/api/auth/reset-password", async (req, res) => {
+  const { token, newPassword } = req.body;
 
-    if (!token || typeof newPassword !== "string" || !newPassword.trim()) {
-      return res.status(400).json({
-        message: "Token and new password are required"
-      });
-    }
-
-    // 1. Check Student/User reset token
-    const user = await User.findOne({
-      resetToken: token,
-      resetTokenExpiry: { $gt: Date.now() }
-    });
-
-    if (user) {
-      const hashedPassword = await hashPassword(newPassword);
-      user.password = hashedPassword;
-      user.resetToken = null;
-      user.resetTokenExpiry = null;
-
-      await user.save();
-
-      await Student.findOneAndUpdate(
-        { email: user.email },
-        { password: hashedPassword },
-        {runValidators: true}
-      );
-
-      return res.json({
-        message: "Password reset successful"
-      });
-    }
-
-    // 2. If not Student/User, check Vendor reset token
-    const vendor = await Vendor.findOne({
-      resetToken: token,
-      resetTokenExpiry: { $gt: Date.now() }
-    });
-
-    if (vendor) {
-      vendor.password = await hashPassword(newPassword);
-      vendor.resetToken = null;
-      vendor.resetTokenExpiry = null;
-
-      await vendor.save();
-
-      return res.json({
-        message: "Password reset successful"
-      });
-    }
-
-    // 3. Token doesn't exist or expired
+  if (!token || typeof newPassword !== "string" || !newPassword.trim()) {
     return res.status(400).json({
-      message: "Invalid or expired token"
+      message: "Token and new password are required"
     });
+  }
+
+  // 1. Check Student/User reset token
+  const user = await User.findOne({
+    resetToken: token,
+    resetTokenExpiry: { $gt: Date.now() }
   });
+
+  if (user) {
+    const hashedPassword = await hashPassword(newPassword);
+    user.password = hashedPassword;
+    user.resetToken = null;
+    user.resetTokenExpiry = null;
+
+    await user.save();
+
+    await Student.findOneAndUpdate(
+      { email: user.email },
+      { password: hashedPassword },
+      { runValidators: true }
+    );
+
+    return res.json({
+      message: "Password reset successful"
+    });
+  }
+
+  // 2. If not Student/User, check Vendor reset token
+  const vendor = await Vendor.findOne({
+    resetToken: token,
+    resetTokenExpiry: { $gt: Date.now() }
+  });
+
+  if (vendor) {
+    vendor.password = await hashPassword(newPassword);
+    vendor.resetToken = null;
+    vendor.resetTokenExpiry = null;
+
+    await vendor.save();
+
+    return res.json({
+      message: "Password reset successful"
+    });
+  }
+
+  // 3. Token doesn't exist or expired
+  return res.status(400).json({
+    message: "Invalid or expired token"
+  });
+});
 
 // ============================================================
 // ONE-TIME SYNC ROUTE
@@ -3609,7 +3609,7 @@ app.post("/api/auth/forgot-password", forgotPasswordLimiter, async (req, res) =>
 
 // Copy all adminDB students → studentDB Users
 
-app.post("/api/admin/sync-students",authenticateToken,requireAdmin, async (req, res) => {
+app.post("/api/admin/sync-students", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const allStudents = await Student.find();
     let synced = 0;
@@ -3668,7 +3668,7 @@ app.post("/api/admin/sync-students",authenticateToken,requireAdmin, async (req, 
 // ============================================================
 
 // 0. VENDOR PROFILE ROUTE
-app.get("/api/vendor/profile",authenticateToken,requireVendor, async (req, res) => {
+app.get("/api/vendor/profile", authenticateToken, requireVendor, async (req, res) => {
   try {
     const vendorId = req.user.sub;
 
@@ -3706,7 +3706,7 @@ app.get("/api/vendor/profile",authenticateToken,requireVendor, async (req, res) 
 });
 
 // 1. TODAY'S MEALS ROUTE
-app.get("/api/vendor/today-meals",authenticateToken,requireVendor, async (req, res) => {
+app.get("/api/vendor/today-meals", authenticateToken, requireVendor, async (req, res) => {
   try {
     const nowIST = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
     const today = new Date(nowIST);
@@ -3766,7 +3766,7 @@ app.get("/api/vendor/today-meals",authenticateToken,requireVendor, async (req, r
 // VENDOR RATING ROUTE
 // ============================================================
 
-app.get("/api/vendor/rating",authenticateToken,requireVendor, async (req, res) => {
+app.get("/api/vendor/rating", authenticateToken, requireVendor, async (req, res) => {
   try {
     const vendorId = req.user.sub;
 
@@ -3872,7 +3872,7 @@ app.get("/api/vendor/rating",authenticateToken,requireVendor, async (req, res) =
 
 // 3. VENDOR BILLING ROUTE
 // 3. VENDOR BILLING ROUTE
-app.get("/api/vendor/billing",authenticateToken,requireVendor, async (req, res) => {
+app.get("/api/vendor/billing", authenticateToken, requireVendor, async (req, res) => {
   try {
     const { month } = req.query;
     const vendorId = req.user.sub;
@@ -3964,8 +3964,8 @@ app.get("/api/vendor/billing",authenticateToken,requireVendor, async (req, res) 
 
         studentsList.push({
           name: billing.name ||
-                user?.fullName ||
-                billing.studentId,
+            user?.fullName ||
+            billing.studentId,
 
           room: room,
 
@@ -4102,11 +4102,12 @@ async function backfillBilling() {
     console.error("[Backfill] Fatal error during billing backfill:", err.message);
   }
 }
-
+//adding port to change from 5000 to process.env so that use render
+const PORT = process.env.PORT || 5000;
 if (require.main === module) {
-  app.listen(5000, () => {
-    console.log("Server running on port 5000");
-    console.log("Homepage: http://localhost:5000");
+  app.listen(PORT, () => {
+    console.log("Server running on port ${PORT}");
+    console.log("Homepage: http://localhost:${PORT}");
     // Run billing backfill in the background on every startup so bills are
     // accurate even for months the server was offline.
     backfillBilling();
