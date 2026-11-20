@@ -8,7 +8,7 @@ if (role !== "admin") {
 
 async function loadStudentsFromDB() {
   try {
-    const res = await fetch("http://localhost:5000/api/admin/students", {
+    const res = await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/students", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }
@@ -31,7 +31,7 @@ async function loadStudentsFromDB() {
 
 async function loadTodayStats() {
   try {
-    const res  = await fetch("http://localhost:5000/api/admin/today-stats",{
+    const res  = await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/today-stats",{
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }
@@ -46,7 +46,7 @@ async function loadTodayStats() {
 }
 async function loadBillingFromDB() {
   try {
-    const res = await fetch("http://localhost:5000/api/admin/billing/all", {
+    const res = await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/billing/all", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }
@@ -101,12 +101,12 @@ async function loadBillingFromDB() {
 async function loadLeavesFromDB() {
   try {
     const [pendingRes, processedRes] = await Promise.all([
-      fetch("http://localhost:5000/api/admin/leaves/pending", {
+      fetch("https://mess-management-backend-zeda.onrender.com/api/admin/leaves/pending", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`
         }
       }),
-      fetch("http://localhost:5000/api/admin/leaves/processed", {
+      fetch("https://mess-management-backend-zeda.onrender.com/api/admin/leaves/processed", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`
         }
@@ -450,7 +450,7 @@ async function savePolicySettings() {
   }
 
   try {
-    const res = await fetch("http://localhost:5000/api/admin/policy", {
+    const res = await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/policy", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -484,7 +484,7 @@ async function savePolicySettings() {
 
 async function loadPolicy() {
   try {
-    const res = await fetch("http://localhost:5000/api/admin/policy", {
+    const res = await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/policy", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }
@@ -521,7 +521,7 @@ async function addAdmin() {
     return;
   }
   try {
-    const res = await fetch("http://localhost:5000/add-admin", {
+    const res = await fetch("https://mess-management-backend-zeda.onrender.com/add-admin", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -546,7 +546,7 @@ async function addAdmin() {
 // Server-connected loadAdmins (from admin1.js)
 async function loadAdmins() {
   try {
-    const res = await fetch("http://localhost:5000/admins", {
+    const res = await fetch("https://mess-management-backend-zeda.onrender.com/admins", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -582,7 +582,7 @@ async function updateOwnPassword() {
     return;
   }
   try {
-    const res = await fetch("http://localhost:5000/update-password", {
+    const res = await fetch("https://mess-management-backend-zeda.onrender.com/update-password", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -804,7 +804,7 @@ async function importCSV(input) {
   toast("Importing students...");
 
   try {
-    const res = await fetch("http://localhost:5000/api/admin/import-students", {
+    const res = await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/import-students", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -852,7 +852,7 @@ async function addStudent() {
   }
   try {
     const response = await fetch(
-      "http://localhost:5000/api/admin/add-student",
+      "https://mess-management-backend-zeda.onrender.com/api/admin/add-student",
       {
         method: "POST",
         headers: { "Content-Type": "application/json",
@@ -893,7 +893,7 @@ async function saveStudentEdit(id) {
   }
   try {
     const response = await fetch(
-      `http://localhost:5000/api/admin/update-student/${id}`,
+      `https://mess-management-backend-zeda.onrender.com/api/admin/update-student/${id}`,
       {
         method: "PUT",
         headers: { "Content-Type": "application/json",
@@ -1018,7 +1018,7 @@ async function deleteStudent(id) {
   const confirmed = await showConfirmBox("Delete Student", `Delete student ${s.name} (${s.regNo})?`);
   if (!confirmed) return;
   try {
-    const res = await fetch(`http://localhost:5000/api/admin/delete-student/${id}`, {
+    const res = await fetch(`https://mess-management-backend-zeda.onrender.com/api/admin/delete-student/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -1033,7 +1033,7 @@ async function deleteStudent(id) {
     render();
     showUndoToast(`Deleted student ${s.name}`, async () => {
       try {
-        const restRes = await fetch("http://localhost:5000/api/admin/restore-student", {
+        const restRes = await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/restore-student", {
           method: "POST",
           headers: { "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -1065,7 +1065,7 @@ async function bulkDeleteStudents() {
   const toDelete = Store.students.filter((s) => selectedStudents.has(s._id));
   try {
     for (const s of toDelete) {
-      await fetch(`http://localhost:5000/api/admin/delete-student/${s._id}`, {
+      await fetch(`https://mess-management-backend-zeda.onrender.com/api/admin/delete-student/${s._id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -1079,7 +1079,7 @@ async function bulkDeleteStudents() {
       try {
         let restoredCount = 0;
         for (const s of toDelete) {
-          const restRes = await fetch("http://localhost:5000/api/admin/restore-student", {
+          const restRes = await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/restore-student", {
             method: "POST",
             headers: { "Content-Type": "application/json",
               Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -1661,7 +1661,7 @@ async function addPayment(id) {
   const targetId = b.studentId || b.regNo || id;
 
   try {
-    const res = await fetch("http://localhost:5000/api/admin/bills/payment", {
+    const res = await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/bills/payment", {
       method: "POST",
       headers: { "Content-Type": "application/json",
         "Authorization": `Bearer ${localStorage.getItem("token")}`
@@ -1713,7 +1713,7 @@ async function promptAddOtherCharge(id) {
   const targetId = b.studentId || b.regNo || id;
 
   try {
-    const res = await fetch("http://localhost:5000/api/admin/bills/other-charge", {
+    const res = await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/bills/other-charge", {
       method: "POST",
       headers: { "Content-Type": "application/json",
         "Authorization": `Bearer ${localStorage.getItem("token")}`
@@ -1763,7 +1763,7 @@ async function clearBill(id) {
   const targetId = b.studentId || b.regNo || id;
 
   try {
-    const res = await fetch("http://localhost:5000/api/admin/bills/clean", {
+    const res = await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/bills/clean", {
       method: "POST",
       headers: { "Content-Type": "application/json",
         "Authorization": `Bearer ${localStorage.getItem("token")}`
@@ -1802,7 +1802,7 @@ async function clearAllBillsBulk() {
   }
 
   try {
-    const res = await fetch("http://localhost:5000/api/admin/bills/clear-all", {
+    const res = await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/bills/clear-all", {
       method: "POST",
       headers: { "Content-Type": "application/json",
         "Authorization": `Bearer ${localStorage.getItem("token")}`
@@ -1832,7 +1832,7 @@ async function updateBillMonth(id, month) {
 
   const targetId = encodeURIComponent(b.studentId || b.regNo || id);
   try {
-    const res = await fetch(`http://localhost:5000/api/admin/bills/${targetId}`, {
+    const res = await fetch(`https://mess-management-backend-zeda.onrender.com/api/admin/bills/${targetId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json",
         "Authorization": `Bearer ${localStorage.getItem("token")}`
@@ -1924,7 +1924,7 @@ async function approveLeave(id) {
   const l = Store.leaves.find(x => String(x._id) === String(id));
   if (!l) { toast("Request not found ❌", "error"); return; }
   try {
-    const res = await fetch(`http://localhost:5000/api/admin/leaves/${l._id}`, {
+    const res = await fetch(`https://mess-management-backend-zeda.onrender.com/api/admin/leaves/${l._id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json",
         "Authorization": `Bearer ${localStorage.getItem("token")}`
@@ -1948,7 +1948,7 @@ async function rejectLeave(id) {
   const l = Store.leaves.find(x => String(x._id) === String(id));
   if (!l) { toast("Request not found ❌", "error"); return; }
   try {
-    const res = await fetch(`http://localhost:5000/api/admin/leaves/${l._id}`, {
+    const res = await fetch(`https://mess-management-backend-zeda.onrender.com/api/admin/leaves/${l._id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json",
         "Authorization": `Bearer ${localStorage.getItem("token")}`
@@ -1992,7 +1992,7 @@ function renderNotices() {
           (n) => `
         <tr><td class="mono" style="font-size:12px">${formatDate(n.date)}</td>
           <td style="white-space:normal;max-width:400px">${n.content}</td>
-          <td>${n.attachment ? `<a href="http://localhost:5000/uploads/${n.attachment}" target="_blank" class="badge badge-green">📎 View</a>` : '<span class="muted">None</span>'}</td>
+          <td>${n.attachment ? `<a href="https://mess-management-backend-zeda.onrender.com/uploads/${n.attachment}" target="_blank" class="badge badge-green">📎 View</a>` : '<span class="muted">None</span>'}</td>
           <td><button class="btn btn-red btn-sm" onclick="retractNotice('${n._id}')">🗑 Retract</button></td>
         </tr>`,
         )
@@ -2003,7 +2003,7 @@ function renderNotices() {
 
 async function loadNoticesFromDB() {
   try {
-    const res = await fetch("http://localhost:5000/api/admin/notices", {
+    const res = await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/notices", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }
@@ -2049,7 +2049,7 @@ async function postNotice(e) {
     formData.append("attachment", fileInput.files[0]);
   }
   try {
-    const response = await fetch("http://localhost:5000/api/admin/add-notice", {
+    const response = await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/add-notice", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -2079,7 +2079,7 @@ async function retractNotice(id) {
   );
   if (!confirmed) return;
   try {
-    await fetch(`http://localhost:5000/api/admin/delete-notice/${id}`, {
+    await fetch(`https://mess-management-backend-zeda.onrender.com/api/admin/delete-notice/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -2099,7 +2099,7 @@ function updateNoticeTable() {
       (n) => `
     <tr><td class="mono" style="font-size:12px">${formatDate(n.date)}</td>
       <td style="white-space:normal;max-width:400px">${n.content}</td>
-      <td>${n.attachment ? `<a href="http://localhost:5000/uploads/${n.attachment}" target="_blank" class="badge badge-green">📎 View</a>` : '<span class="muted">None</span>'}</td>
+      <td>${n.attachment ? `<a href="https://mess-management-backend-zeda.onrender.com/uploads/${n.attachment}" target="_blank" class="badge badge-green">📎 View</a>` : '<span class="muted">None</span>'}</td>
       <td><button class="btn btn-red btn-sm" onclick="retractNotice('${n._id}')">🗑 Retract</button></td>
     </tr>`,
     )
@@ -2109,7 +2109,7 @@ function updateNoticeTable() {
 
 async function loadHostelsFromDB() {
   try {
-    const res = await fetch("http://localhost:5000/api/admin/hostels", {
+    const res = await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/hostels", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }
@@ -2165,7 +2165,7 @@ async function loadBilling() {
   `;
 
   try {
-    const res = await fetch("http://localhost:5000/api/admin/billing/all",{
+    const res = await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/billing/all",{
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }
@@ -2199,7 +2199,7 @@ async function loadBilling() {
 
 async function loadVendorsFromDB() {
   try {
-    const res = await fetch("http://localhost:5000/api/admin/vendors", {
+    const res = await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/vendors", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }
@@ -2230,7 +2230,7 @@ async function loadVendorsFromDB() {
 async function downloadVendorContract(id) {
   try {
     const res = await fetch(
-      `http://localhost:5000/api/admin/vendors/${id}/contract`,
+      `https://mess-management-backend-zeda.onrender.com/api/admin/vendors/${id}/contract`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -2395,7 +2395,7 @@ async function saveVendor(id) {
     formData.append("tenure", tenure);
     formData.append("contract", contractInput.files[0]);
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/vendors/${id}`, {
+      const res = await fetch(`https://mess-management-backend-zeda.onrender.com/api/admin/vendors/${id}`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -2410,7 +2410,7 @@ async function saveVendor(id) {
     }
   } else {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/vendors/${id}`, {
+      const res = await fetch(`https://mess-management-backend-zeda.onrender.com/api/admin/vendors/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -2461,7 +2461,7 @@ async function addVendor() {
   }
 
   try {
-    const res = await fetch("http://localhost:5000/api/admin/vendors", {
+    const res = await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/vendors", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -2489,7 +2489,7 @@ async function terminateVendor(id) {
 
   const deleted = Store.vendors.find((v) => v._id === id);
   try {
-    await fetch(`http://localhost:5000/api/admin/vendors/${id}`, { method: "DELETE",
+    await fetch(`https://mess-management-backend-zeda.onrender.com/api/admin/vendors/${id}`, { method: "DELETE",
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
      });
     Store.vendors = Store.vendors.filter((v) => v._id !== id);
@@ -2500,7 +2500,7 @@ async function terminateVendor(id) {
       const combinedTenure = (deleted.contractStart || deleted.tenure) ? `${deleted.contractStart || ''}|${deleted.tenure || ''}` : '';
       ["name","phone","email","aadhaar","hostel"].forEach(k => formData.append(k, deleted[k] || ""));
       formData.append("tenure", combinedTenure);
-      await fetch("http://localhost:5000/api/admin/vendors", { method: "POST",
+      await fetch("https://mess-management-backend-zeda.onrender.com/api/admin/vendors", { method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
          body: formData });
       await loadVendorsFromDB();
@@ -2511,7 +2511,7 @@ async function terminateVendor(id) {
 }
 async function resetRating(id) {
   try {
-    await fetch(`http://localhost:5000/api/admin/vendors/${id}/rating`, {
+    await fetch(`https://mess-management-backend-zeda.onrender.com/api/admin/vendors/${id}/rating`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -2685,7 +2685,7 @@ async function addHostel() {
   if (menuFile) formData.append('messMenuImage', menuFile);
 
   try {
-    const res = await fetch('http://localhost:5000/api/admin/hostels', {
+    const res = await fetch('https://mess-management-backend-zeda.onrender.com/api/admin/hostels', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -2744,7 +2744,7 @@ function openEditHostelModal(id) {
         <input type="file" id="em_menu_file" accept="image/*" style="display:none"/>
         <span id="em_menu_name" class="muted" style="font-size:12px">${h.messMenuImage ? 'Menu uploaded ✓' : 'No file chosen'}</span>
       </div>
-      ${h.messMenuImage ? `<img src="http://localhost:5000${h.messMenuImage}" id="em_menu_preview" alt="Current Menu" style="max-width:180px;max-height:120px;object-fit:contain;border:1px solid var(--border);border-radius:6px;margin-top:6px"/>` : `<img id="em_menu_preview" src="" alt="Menu Preview" style="display:none;max-width:180px;max-height:120px;object-fit:contain;border:1px solid var(--border);border-radius:6px;margin-top:6px"/>`}
+      ${h.messMenuImage ? `<img src="https://mess-management-backend-zeda.onrender.com${h.messMenuImage}" id="em_menu_preview" alt="Current Menu" style="max-width:180px;max-height:120px;object-fit:contain;border:1px solid var(--border);border-radius:6px;margin-top:6px"/>` : `<img id="em_menu_preview" src="" alt="Menu Preview" style="display:none;max-width:180px;max-height:120px;object-fit:contain;border:1px solid var(--border);border-radius:6px;margin-top:6px"/>`}
       <div class="confirm-actions" style="margin-top:16px">
         <button class="btn btn-outline" id="em_cancel">Cancel</button>
         <button class="btn btn-primary" id="em_save">Save Changes</button>
@@ -2792,7 +2792,7 @@ function openEditHostelModal(id) {
   if (menuFile) formData.append('messMenuImage', menuFile);
 
   try {
-    const res = await fetch(`http://localhost:5000/api/admin/hostels/${h._id}`, {
+    const res = await fetch(`https://mess-management-backend-zeda.onrender.com/api/admin/hostels/${h._id}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -2815,7 +2815,7 @@ async function deleteHostelCard(id) {
   if (!confirmed) return;
 
   try {
-    const res = await fetch(`http://localhost:5000/api/admin/hostels/${h._id}`, {
+    const res = await fetch(`https://mess-management-backend-zeda.onrender.com/api/admin/hostels/${h._id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     });
@@ -2854,7 +2854,7 @@ function showMenuPopup(id) {
         <span>🍽 Mess Menu – ${h.name}</span>
         <button id="menupop_close" class="hcv2-menu-close">&times;</button>
       </div>
-      <img src="http://localhost:5000${h.messMenuImage}" alt="Mess Menu" class="hcv2-menu-popup-img"/>
+      <img src="https://mess-management-backend-zeda.onrender.com${h.messMenuImage}" alt="Mess Menu" class="hcv2-menu-popup-img"/>
     </div>`;
   document.body.appendChild(overlay);
   requestAnimationFrame(() => overlay.classList.add('active'));

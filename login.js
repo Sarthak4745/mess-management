@@ -196,7 +196,7 @@
     }
 
     try {
-      const response = await fetch("http://localhost:5000/login", {
+      const response = await fetch("https://mess-management-backend-zeda.onrender.com/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -326,7 +326,7 @@
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/forgot-password", {
+      const res = await fetch("https://mess-management-backend-zeda.onrender.com/api/auth/forgot-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

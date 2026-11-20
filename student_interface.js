@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         var response = await fetch(
-            "http://localhost:5000/api/student/profile",
+            "https://mess-management-backend-zeda.onrender.com/api/student/profile",
             {
                 headers: { 
                     Authorization: "Bearer " + localStorage.getItem("token") // if using token-based auth
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var studentId = localStorage.getItem("studentId");
 
             var response = await fetch(
-            `http://localhost:5000/api/student/coupon/today?studentId=${studentId}`,
+            `https://mess-management-backend-zeda.onrender.com/api/student/coupon/today?studentId=${studentId}`,
             {
                 headers: {
                     "Authorization": "Bearer " + localStorage.getItem("token") // if using token-based auth
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             var studentId = localStorage.getItem("studentId");
             if (!studentId) return { personalUsed: 0, personalLimit: 5, pendingOfficial: 0 };
-            var response = await fetch("http://localhost:5000/api/student/cancel-status?studentId=" + encodeURIComponent(studentId),
+            var response = await fetch("https://mess-management-backend-zeda.onrender.com/api/student/cancel-status?studentId=" + encodeURIComponent(studentId),
                 {
                     headers: {
                         "Authorization": "Bearer " + localStorage.getItem("token")
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function () {
      */
     async function submitCancelRequest(formData) {
         try {
-            const response = await fetch("http://localhost:5000/api/student/cancel-request", {
+            const response = await fetch("https://mess-management-backend-zeda.onrender.com/api/student/cancel-request", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // ✅ Send studentId to backend
         var response = await fetch(
-            `http://localhost:5000/api/student/preferences?studentId=${studentId}`,
+            `https://mess-management-backend-zeda.onrender.com/api/student/preferences?studentId=${studentId}`,
             {
                 headers: {
                     "Authorization": "Bearer " + localStorage.getItem("token")
@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!studentId) return { cancelledDays: [], dataAvailable: false };
 
             // Updated URL with studentId
-            var response = await fetch(`http://localhost:5000/api/student/calendar?studentId=${studentId}&month=${month}&year=${year}`,
+            var response = await fetch(`https://mess-management-backend-zeda.onrender.com/api/student/calendar?studentId=${studentId}&month=${month}&year=${year}`,
                 {
                     headers: {
                         "Authorization": "Bearer " + localStorage.getItem("token")
@@ -344,7 +344,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
         if (!studentId) return { billingPeriod: '--', amountPerMeal: 0, totalMeals: 0, amountDue: 0, grandTotal: 0 };
 
-        var response = await fetch(`http://localhost:5000/api/student/billing?studentId=${studentId}`,
+        var response = await fetch(`https://mess-management-backend-zeda.onrender.com/api/student/billing?studentId=${studentId}`,
             {
                 headers: {
                     "Authorization": "Bearer " + localStorage.getItem("token")
@@ -376,7 +376,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var studentId = localStorage.getItem("studentId");
 
     var response = await fetch(
-        "http://localhost:5000/api/student/preferences",
+        "https://mess-management-backend-zeda.onrender.com/api/student/preferences",
         {
             method: "POST",
             headers: { "Content-Type": "application/json",
@@ -405,7 +405,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const m = now.getMonth() + 1;
             const y = now.getFullYear();
 
-            const response = await fetch(`http://localhost:5000/api/student/feedback/status?studentId=${studentId}&month=${m}&year=${y}`,
+            const response = await fetch(`https://mess-management-backend-zeda.onrender.com/api/student/feedback/status?studentId=${studentId}&month=${m}&year=${y}`,
                 {
                     headers: {
                         "Authorization": "Bearer " + localStorage.getItem("token")
@@ -436,7 +436,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ...feedbackData // contains month, year, ratings, comment
             };
 
-            const response = await fetch('http://localhost:5000/api/student/feedback', {
+            const response = await fetch('https://mess-management-backend-zeda.onrender.com/api/student/feedback', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json',
                     "Authorization": "Bearer " + localStorage.getItem("token")
@@ -673,7 +673,7 @@ document.addEventListener('DOMContentLoaded', function () {
     async function loadLeaveNotifications() {
   try {
     var studentId = localStorage.getItem("studentId");
-    var res = await fetch("http://localhost:5000/api/student/leaves/status?studentId=" + encodeURIComponent(studentId),
+    var res = await fetch("https://mess-management-backend-zeda.onrender.com/api/student/leaves/status?studentId=" + encodeURIComponent(studentId),
         {
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token")
@@ -936,7 +936,7 @@ loadLeaveNotifications();
 
             try {
                 // 2. Send the exact payload the backend expects
-                var response = await fetch('http://localhost:5000/api/student/cancel-request', {
+                var response = await fetch('https://mess-management-backend-zeda.onrender.com/api/student/cancel-request', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

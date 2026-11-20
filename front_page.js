@@ -10,7 +10,7 @@
 // BACKEND INTEGRATION:
 // Change this URL if your backend API endpoint differs.
 // %%"New Connection"%% — Pointing to our new hostel API
-const API_HOSTELS = 'http://localhost:5000/api/hostels';
+const API_HOSTELS = 'https://mess-management-backend-zeda.onrender.com/api/hostels';
 
 // Breakpoint for mobile/desktop switch
 const MOBILE_BP = 768;
@@ -279,7 +279,7 @@ async function loadTicker() {
   if (!trackEl) return;
 
   try {
-    const res = await fetch('http://localhost:5000/api/notices');
+    const res = await fetch('https://mess-management-backend-zeda.onrender.com/api/notices');
     if (!res.ok) throw new Error('Status ' + res.status);
     const notices = await res.json();
     cachedNotices = Array.isArray(notices) ? notices : [];
@@ -355,7 +355,7 @@ async function openNoticesModal() {
         <p>Loading notices...</p>
       </div>`;
     try {
-      const res = await fetch('http://localhost:5000/api/notices');
+      const res = await fetch('https://mess-management-backend-zeda.onrender.com/api/notices');
       if (res.ok) cachedNotices = await res.json();
     } catch (err) {
       console.error('Error fetching notices:', err);
@@ -424,12 +424,12 @@ async function openMenuModal(hostelId, hostelName) {
   document.body.style.overflow = 'hidden';
 
   try {
-    const res = await fetch(`http://localhost:5000/api/menu?hostel=${encodeURIComponent(hostelName || '')}`);
+    const res = await fetch(`https://mess-management-backend-zeda.onrender.com/api/menu?hostel=${encodeURIComponent(hostelName || '')}`);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
 
     if (data && data.menuImage) {
-      const url = 'http://localhost:5000' + data.menuImage;
+      const url = 'https://mess-management-backend-zeda.onrender.com' + data.menuImage;
       if (loadEl) loadEl.style.display = 'none';
       if (imgEl) {
         imgEl.src = url;

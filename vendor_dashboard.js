@@ -50,7 +50,7 @@
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    const API_BASE = "http://localhost:5000";
+    const API_BASE = "https://mess-management-backend-zeda.onrender.com";
     function handleUnauthorized(response) {
         if (response.status === 401) {
             localStorage.removeItem("token");
